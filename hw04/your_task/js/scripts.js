@@ -16,11 +16,56 @@ const search = (ev) => {
     }
 }
 
+
 const getTracks = (term) => {
-    console.log(`
-        get tracks from spotify based on the search term
-        "${term}" and load them into the #tracks section 
-        of the DOM...`);
+    // Before you do anything, clear out the HTML:
+    document.querySelector('#tracks').innerHTML = "";
+
+    // 1. build the url with the search term:
+    const url = 'https://www.apitutor.org/spotify/simple/v1/search?type=track&q=' + term;
+
+    // 2.  Go out and fetch the tracks associated with the url, and then dump the resulting
+    //     data to the screen:
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // what is data? -> list of javascript objects
+            let counter = 0;
+            for (const track of data) {
+                if (counter === 5) {
+                    break;
+                }
+
+                // A. create the template
+                const template = `
+                    <section class="track-item preview" data-preview-track="${track.preview_url}">
+                        <img src="${track.album.image_url}">
+                        <i class="fas fa-play play-track" aria-hidden="true"></i>
+                        <div class="label">
+                            <h3>${track.name}</h3>
+                            <p>
+                                ${track.artist.name}
+                            </p>
+                        </div>
+                    </section>`;
+
+                // B. Figure out which element in the DOM to target
+                document.querySelector('#tracks').innerHTML += template;
+                ++counter;
+            }
+
+            //after the for loop has completed and the DOM has been populated, we
+            // need to add the click event handlers to play the song:
+            const trackElements = document.querySelectorAll('.track-item');
+            for (const item of trackElements) {
+                item.onclick = (ev) => {
+                    const preview_url = ev.srcElement.getAttribute('data-preview-track')
+                    audioPlayer.setAudioFile(preview_url);
+                    audioPlayer.play();
+                };
+            }
+
+        });
 };
 
 const getAlbums = (term) => {

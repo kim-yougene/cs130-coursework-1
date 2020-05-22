@@ -17,10 +17,12 @@ const search = (ev) => {
 }
 
 const getTracks = (term) => {
-    console.log(`
-        get tracks from spotify based on the search term
-        "${term}" and load them into the #tracks section 
-        of the DOM...`);
+    // 1. build the url with the search term:
+    const url = 'https://www.apitutor.org/spotify/simple/v1/search?type=track&q=' + term;
+
+    // 2.  Go out and fetch the tracks associated with the url, and then dump the resulting
+    //     data to the screen:
+     
 };
 
 const getAlbums = (term) => {
